@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="./favicon.ico" />
+    <!-- Preload is necessary because we show these images when we disconnect from the server,
+    but at that point we cannot load these images from the server -->
+    <link rel="preload" href="./assets/gradient-yHQUC_QB.png" as="image" />
+    <link rel="preload" href="./assets/noise-60BoTA8O.png" as="image" />
+    <!-- Preload the fonts -->
+    <link rel="preload" href="./assets/Lora-VariableFont_wght-B2ootaw-.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/PTSans-Regular-CxL0S8W7.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/PTSans-Bold-D9fedIX3.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Regular-BTCkDNvf.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Medium-DU3aDxX5.ttf" as="font" crossorigin="anonymous" />
+    <link rel="preload" href="./assets/FiraMono-Bold-CLVRCuM9.ttf" as="font" crossorigin="anonymous" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="a marimo app" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.json" />
+
+    <script data-marimo="true">
+      function __resizeIframe(obj) {
+        var scrollbarHeight = 20; // Max between windows, mac, and linux
+
+        function setHeight() {
+          var element = obj.contentWindow.document.documentElement;
+          // If there is no vertical scrollbar, we don't need to resize the iframe
+          if (element.scrollHeight === element.clientHeight) {
+            return;
+          }
+
+          // Create a new height that includes the scrollbar height if it's visible
+          var hasHorizontalScrollbar = element.scrollWidth > element.clientWidth;
+          var newHeight = element.scrollHeight + (hasHorizontalScrollbar ? scrollbarHeight : 0);
+
+          // Only update the height if it's different from the current height
+          if (obj.style.height !== `${newHeight}px`) {
+            obj.style.height = `${newHeight}px`;
+          }
+        }
+
+        // Resize the iframe to the height of the content and bottom scrollbar height
+        setHeight();
+
+        // Resize the iframe when the content changes
+        const resizeObserver = new ResizeObserver((entries) => {
+          setHeight();
+        });
+        resizeObserver.observe(obj.contentWindow.document.body);
+      }
+    </script>
+    <marimo-filename hidden>notebook.py</marimo-filename>
+    <title>AUC curves</title>
+    <script type="module" crossorigin src="./assets/index-g8LxgBK2.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BVt8Dtzn.css">
+  <marimo-wasm hidden=""></marimo-wasm>
+    <script>
+        if (window.location.protocol === 'file:') {
+            alert('Warning: This file must be served by an HTTP server to function correctly.');
+        }
+    </script>
+    
+    <style>
+        #save-button {
+            display: none !important;
+        }
+        #filename-input {
+            display: none !important;
+        }
+    </style>
+    <marimo-code hidden="">import%20marimo%0A%0A__generated_with%20%3D%20%220.14.6%22%0Aapp%20%3D%20marimo.App(width%3D%22medium%22)%0A%0A%0A%40app.cell%0Adef%20_(np%2C%20pd)%3A%0A%0A%20%20%20%20Cu2%20%3D%20np.arange(0%2C%200.5%2C%200.033)%20%0A%20%20%20%20Ni2%20%3D%20np.arange(0%2C%201.8%2C%200.133)%20%0A%0A%0A%20%20%20%20XCu%2C%20YNi%20%3D%20np.meshgrid(Cu2%2C%20Ni2)%0A%0A%0A%0A%20%20%20%20Fl%20%3D%20np.array(%5Bi%20*%201e18%20for%20i%20in%20range(1%2C%20int(1e20%20%2F%201e18)%20%2B%201)%5D)*1e4%20%20%23%20n%2Fm2%0A%0A%20%20%20%20%23%20-----------------------------%0A%0A%20%20%20%20df_plotter%20%3D%20pd.read_csv(%22data%2Fcsv_files%2Fdf_plotter.csv%22)%0A%20%20%20%20df_plotter.reset_index(drop%3DTrue%2C%20inplace%3DTrue)%0A%20%20%20%20return%20Cu2%2C%20Fl%2C%20Ni2%2C%20df_plotter%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20%23%20Tslide%20%3D%20mo.ui.slider(start%3Ddf_plotter%5B%22Temperature_Celsius%22%5D.min()%2C%20stop%3Ddf_plotter%5B%22Temperature_Celsius%22%5D.max()%2C%20step%3Ddf_plotter%5B%22Temperature_Celsius%22%5D.std()%2F3%2C%20value%3Ddf_plotter%5B%22Temperature_Celsius%22%5D.mean()%2C%20label%3D%22Temperature_Celsius%22)%0A%20%20%20%20%23%20Mnslide%20%3D%20mo.ui.slider(start%3Ddf_plotter%5B%22Mn%22%5D.min()%2C%20stop%3Ddf_plotter%5B%22Mn%22%5D.max()%2C%20step%3Ddf_plotter%5B%22Mn%22%5D.std()%2F3%2C%20value%3Ddf_plotter%5B%22Mn%22%5D.mean()%2C%20label%3D%22Mn%22)%0A%20%20%20%20%23%20Pslide%20%3D%20mo.ui.slider(start%3Ddf_plotter%5B%22P%22%5D.min()%2C%20stop%3Ddf_plotter%5B%22P%22%5D.max()%2C%20step%3Ddf_plotter%5B%22P%22%5D.std()%2F3%2C%20value%3Ddf_plotter%5B%22P%22%5D.mean()%2C%20label%3D%22P%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_(df_plotter%2C%20mo%2C%20np)%3A%0A%20%20%20%20Tslide%20%3D%20mo.ui.slider(steps%3Dnp.arange(df_plotter%5B%22Temperature_Celsius%22%5D.min()%2C%20df_plotter%5B%22Temperature_Celsius%22%5D.max()%2C%20df_plotter%5B%22Temperature_Celsius%22%5D.std()%2F3)%2C%20label%3D%22%22)%0A%20%20%20%20Mnslide%20%3D%20mo.ui.slider(steps%3Dnp.arange(df_plotter%5B%22Mn%22%5D.min()%2C%20df_plotter%5B%22Mn%22%5D.max()%2C%20df_plotter%5B%22Mn%22%5D.std()%2F3)%2C%20label%3D%22%22)%0A%20%20%20%20Pslide%20%3D%20mo.ui.slider(steps%3Dnp.arange(df_plotter%5B%22P%22%5D.min()%2C%20df_plotter%5B%22P%22%5D.max()%2C%20df_plotter%5B%22P%22%5D.std()%2F3)%2C%20label%3D%22%22)%0A%20%20%20%20return%20Mnslide%2C%20Pslide%2C%20Tslide%0A%0A%0A%40app.cell%0Adef%20_(mo)%3A%0A%20%20%20%20pfdrop%20%3D%20mo.ui.dropdown(%5B%22F%22%2C%20%22P%22%2C%20%22W%22%5D%2C%20label%3D%22Product%20Form%22%2C%20value%3D%22W%22)%0A%20%20%20%20return%20(pfdrop%2C)%0A%0A%0A%40app.cell%0Adef%20_(Mnslide%2C%20Pslide%2C%20Tslide%2C%20pfdrop)%3A%0A%20%20%20%20T%20%3D%20Tslide.value%0A%20%20%20%20P%20%3D%20Pslide.value%0A%20%20%20%20Mn%20%3D%20Mnslide.value%0A%20%20%20%20pf%20%3D%20pfdrop.value%0A%20%20%20%20return%20Mn%2C%20P%2C%20T%2C%20pf%0A%0A%0A%40app.cell%0Adef%20_(%0A%20%20%20%20Cu2%2C%0A%20%20%20%20Fl%2C%0A%20%20%20%20Mn%2C%0A%20%20%20%20Ni2%2C%0A%20%20%20%20P%2C%0A%20%20%20%20T%2C%0A%20%20%20%20TTS_eval%2C%0A%20%20%20%20df_and_dist%2C%0A%20%20%20%20df_plotter%2C%0A%20%20%20%20go%2C%0A%20%20%20%20mo%2C%0A%20%20%20%20np%2C%0A%20%20%20%20pf%2C%0A%20%20%20%20simpson%2C%0A)%3A%0A%20%20%20%20ZT%20%3D%20np.zeros((len(Ni2)%2C%20len(Cu2)))%0A%20%20%20%20c%3Dnp.arange(0%2C4000%2C250)%0A%0A%20%20%20%20for%20nii%20in%20range(len(Ni2))%3A%0A%20%20%20%20%20%20%20%20for%20cui%20in%20range(len(Cu2))%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20ZT%5Bnii%2C%20cui%5D%20%3D%20simpson(TTS_eval(pf%2C%20Cu2%5Bcui%5D%2C%20Ni2%5Bnii%5D%2C%20Mn%2C%20P%2C%20T%2C%20Fl)%2C%20Fl*1e-23)%0A%0A%20%20%20%20AUC%20%3D%20simpson(y%20%3D%20np.array(%5BTTS_eval(pf%2C%20cu%3Ddf_plotter%5B%22Cu%22%5D.to_numpy()%2C%20ni%3Ddf_plotter%5B%22Ni%22%5D.to_numpy()%2C%20mn%3DMn%2C%20p%3DP%2C%20t%3DT%2C%20fl%3DFli)%20for%20Fli%20in%20Fl%5D)%2C%20x%3DFl*1e-23%2C%20axis%3D0)%0A%20%20%20%20fig%20%3D%20go.Figure()%0A%20%20%20%20_max%20%3D%20int(np.max(ZT))%0A%20%20%20%20fig.add_trace(go.Contour(z%20%3D%20ZT%2Cx%3DCu2%2C%20y%3DNi2%2C%20%20contours_coloring%3D'lines'%2Ccolorscale%3D%22Sunsetdark%22%2C%20contours%3Ddict(showlabels%3DTrue%2C%20start%3D0%2C%20end%3D_max%2C%20size%3D200)%2Cshowscale%3DFalse%2C%20hoverinfo%3D%22none%22))%0A%20%20%20%20fig.add_trace(go.Scatter(x%3Ddf_plotter%5B%22Cu%22%5D%2C%20y%3Ddf_plotter%5B%22Ni%22%5D%2C%20mode%3D%22markers%22%2C%20opacity%3D0.3%2C%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20marker%3Ddict(color%3D%22grey%22%2Ccolorscale%3D'Sunsetdark'%2C%20%23%20%3C---%20Define%20la%20paleta%20de%20color%20para%20AUC%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20colorbar%3Ddict(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20title%3D'AUC'%2C%20%23%20T%C3%ADtulo%20de%20la%20barra%20de%20color%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Puedes%20ajustar%20los%20ticks%20si%20lo%20necesitas%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20tickvals%3D%5B0%2C%20100%2C%20200%2C%20300%2C%20400%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20)%2C%20showscale%3DTrue%2Cline%3Ddict(width%3D0.3%2C%20color%3D'DarkSlateGrey')%2Ccmin%3Dnp.min(ZT)%2Ccmax%3Dnp.max(ZT))%2Ccustomdata%3DAUC%2Choverinfo%3D%22none%22%2C%20showlegend%3DFalse))%0A%20%20%20%20aux_df%2C%20dist%20%3D%20df_and_dist(df_plotter%2C%20P%2C%20Mn%2C%20T%2C%20pf)%0A%20%20%20%20if%20aux_df.shape%5B0%5D%20!%3D%200%3A%0A%0A%0A%20%20%20%20%20%20%20%20fig.add_trace(go.Scatter(x%3Daux_df%5B%22Cu%22%5D%2C%20y%3Daux_df%5B%22Ni%22%5D%2C%20mode%3D%22markers%22%2C%20%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20marker%3Ddict(color%3DAUC%5Baux_df.index%5D%2Ccolorscale%3D'Sunsetdark'%2C%20opacity%3Ddist%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20colorbar%3Ddict(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20title%3D'AUC'%2C%20%23%20T%C3%ADtulo%20de%20la%20barra%20de%20color%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20Puedes%20ajustar%20los%20ticks%20si%20lo%20necesitas%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20tickvals%3D%5B0%2C%20100%2C%20200%2C%20300%2C%20400%5D%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20)%2C%20showscale%3DTrue%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20line%3Ddict(width%3D0.3%2C%20color%3D'DarkSlateGrey')%2C%20cmin%3Dnp.min(ZT)%2Ccmax%3Dnp.max(ZT))%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20customdata%3DAUC%5Baux_df.index%5D%2C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20hovertemplate%3D(%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%3Cb%3EX%3A%3C%2Fb%3E%20%25%7Bx%3A.2f%7D%3Cbr%3E%22%20%2B%20%20%23%20Muestra%20el%20valor%20X%2C%20formateado%20a%202%20decimales%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%3Cb%3EY%3A%3C%2Fb%3E%20%25%7By%3A.2f%7D%3Cbr%3E%22%20%2B%20%20%23%20Muestra%20el%20valor%20Y%2C%20formateado%20a%202%20decimales%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%22%3Cb%3EAUC%3A%3C%2Fb%3E%20%25%7Bcustomdata%3A.2f%7D%3Cextra%3E%3C%2Fextra%3E%22%20)%2C%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20showlegend%3DFalse))%0A%20%20%20%20fig.update_layout(title%3Df%22Cu-Ni%20%5B%7Bpf%7D%5D%20--%20AUC%22%2C%20xaxis_title%3D%22Cu%22%2C%20yaxis_title%3D%22Ni%22)%0A%20%20%20%20fig.update_layout(xaxis%3Ddict(range%3D%5B0%2Cnp.max(Cu2)%5D)%2C%20yaxis%3Ddict(range%3D%5B0%2Cnp.max(Ni2)%5D))%0A%20%20%20%20fig.update_layout(width%3D800%2C%20height%3D800)%0A%20%20%20%20mofig%20%3D%20mo.ui.plotly(fig)%0A%20%20%20%20return%20(mofig%2C)%0A%0A%0A%40app.cell%0Adef%20_(Mn%2C%20Mnslide%2C%20P%2C%20Pslide%2C%20T%2C%20Tslide%2C%20df_plotter%2C%20mo%2C%20pfdrop)%3A%0A%20%20%20%20commands%20%3D%20mo.vstack(%5Bmo.hstack(%5BTslide%2C%20mo.md(f%22%7BT%3D%3A.2f%7D%24%5Cpm%24%20%7Bdf_plotter%5B'Temperature_Celsius'%5D.std()%2F2%3A.2f%7D%22)%5D%2C%20justify%3D%22center%22)%2C%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mo.hstack(%5BMnslide%2C%20mo.md(f%22%7BMn%3D%3A.3f%7D%24%5Cpm%24%20%7Bdf_plotter%5B'Mn'%5D.std()%2F2%3A.3f%7D%22)%5D%2C%20justify%3D%22center%22)%2C%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mo.hstack(%5BPslide%2C%20mo.md(f%22%7BP%3D%3A.3f%7D%24%5Cpm%24%20%7Bdf_plotter%5B'P'%5D.std()%2F2%3A.3f%7D%22)%5D%2C%20justify%3D%22center%22)%2C%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20mo.hstack(%5Bpfdrop%5D%2C%20justify%3D%22center%22)%5D)%0A%20%20%20%20return%20(commands%2C)%0A%0A%0A%40app.cell%0Adef%20_(commands%2C%20mo%2C%20mofig)%3A%0A%20%20%20%20mo.hstack(%5Bcommands%2C%20mofig%5D%2C%20justify%3D%22center%22%2C%20align%3D%22center%22)%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20import%20marimo%20as%20mo%0A%20%20%20%20return%20(mo%2C)%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20return%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20import%20numpy%20as%20np%0A%20%20%20%20import%20pandas%20as%20pd%0A%20%20%20%20from%20scipy.integrate%20import%20simpson%0A%20%20%20%20from%20itertools%20import%20product%0A%0A%20%20%20%20return%20np%2C%20pd%2C%20simpson%0A%0A%0A%40app.cell%0Adef%20_()%3A%0A%20%20%20%20import%20plotly.graph_objects%20as%20go%0A%20%20%20%20return%20(go%2C)%0A%0A%0A%40app.cell%0Adef%20_(np)%3A%0A%20%20%20%20def%20minimo%20(a%2Cb)%3A%0A%20%20%20%20%20%20%20%20return%20(0.5%20*%20(%20a%2Bb%20-%20abs(a-b)))%0A%0A%20%20%20%20def%20maximo%20(a%2Cb)%3A%0A%20%20%20%20%20%20%20%20return%20(0.5%20*%20(%20a%2Bb%20%2B%20abs(a-b)))%0A%0A%20%20%20%20def%20TTS_eval(pf%2Ccu%2Cni%2Cmn%2Cp%2Ct%2Cfl)%3A%20%0A%20%20%20%20%20%20%20%20%23fl%20un%20np.array%0A%20%20%20%20%20%20%20%20if%20pf%20%3D%3D%20'F'%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20A%3D1.011%0A%20%20%20%20%20%20%20%20%20%20%20%20B%3D0.738%0A%20%20%20%20%20%20%20%20elif%20(pf%20%3D%3D%20'P')%20or%20(pf%20%3D%3D%20'SRM')%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20A%3D1.080%0A%20%20%20%20%20%20%20%20%20%20%20%20B%3D0.819%0A%20%20%20%20%20%20%20%20elif%20pf%20%3D%3D%20'W'%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20A%3D0.919%0A%20%20%20%20%20%20%20%20%20%20%20%20B%3D0.968%0A%20%20%20%20%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20raise%20ValueError(%22Product%20Form%20no%20admisible%22)%0A%0A%20%20%20%20%20%20%20%20TTS1%20%3D%20A*5%2F9*1.8943e-12*fl**(0.5695)*((1.8*t%2B32)%2F550)**(-5.47)*(0.09%2Bp%2F0.012)**(0.216)*(1.66%2Bni**(8.54)%2F0.63)**(0.39)*(mn%2F1.36)**(0.3)%0A%0A%20%20%20%20%20%20%20%20M%20%3D%20B*maximo(minimo(113.87*(np.log(fl)-np.log(4.5e20))%2C612.6)%2C0)*((1.8*t%2B32)%2F550)**(-5.45)*(0.1%2Bp%2F0.012)**(-0.098)*(0.168%2Bni**(0.58)%2F0.63)**(0.73)%0A%0A%20%20%20%20%20%20%20%20TTS2%20%3D%205%2F9*M*maximo((minimo(cu%2C0.28)-0.053)%2C0)%0A%0A%20%20%20%20%20%20%20%20return%20TTS1%2BTTS2%0A%20%20%20%20return%20(TTS_eval%2C)%0A%0A%0A%40app.cell%0Adef%20_(np)%3A%0A%20%20%20%20def%20df_and_dist(df%2C%20P%2C%20Mn%2C%20T%2C%20pf)%3A%0A%20%20%20%20%20%20%20%20stdP%20%3D%20df%5B%22P%22%5D.std()%2F2%0A%20%20%20%20%20%20%20%20stdMn%20%3D%20df%5B%22Mn%22%5D.std()%2F2%0A%20%20%20%20%20%20%20%20stdT%20%3D%20df%5B%22Temperature_Celsius%22%5D.std()%2F2%0A%0A%20%20%20%20%20%20%20%20aux_df%20%3D%20df%5B(df%5B%22Product_Form%22%5D%20%3D%3D%20pf)%20%26%20((df%5B%22P%22%5D%20%3E%20P-stdP)%20%26%20((df%5B%22P%22%5D%20%3C%20P%2BstdP)))%20%26%20%0A%20%20%20%20%20%20%20%20%20%20%20%20((df%5B%22Mn%22%5D%20%3E%20Mn-stdMn)%20%26%20((df%5B%22Mn%22%5D%20%3C%20Mn%2BstdMn)))%20%26%20%0A%20%20%20%20%20%20%20%20%20%20%20%20((df%5B%22Temperature_Celsius%22%5D%20%3E%20T-stdT)%20%26%20((df%5B%22Temperature_Celsius%22%5D%20%3C%20T%2BstdT)))%5D%0A%20%20%20%20%20%20%20%20if%20aux_df.shape%5B0%5D%3D%3D0%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20aux_df%2C%20%5B0%5D%0A%20%20%20%20%20%20%20%20px%20%3D%20aux_df%5B%22P%22%5D.to_numpy()%0A%20%20%20%20%20%20%20%20mny%20%3D%20aux_df%5B%22Mn%22%5D.to_numpy()%0A%20%20%20%20%20%20%20%20Tz%20%3D%20aux_df%5B%22Temperature_Celsius%22%5D.to_numpy()%0A%0A%20%20%20%20%20%20%20%20dpx%20%3D%20(px%20-%20P)**2%0A%20%20%20%20%20%20%20%20dmny%20%3D%20(mny%20-%20Mn)**2%0A%20%20%20%20%20%20%20%20dTz%20%3D%20(Tz%20-%20T)**2%0A%0A%20%20%20%20%20%20%20%20dist%20%3D%20np.sqrt(dpx%20%2B%20dmny%20%2B%20dTz)%0A%20%20%20%20%20%20%20%20min_orig%20%3D%20np.min(dist)%0A%20%20%20%20%20%20%20%20max_orig%20%3D%20np.max(dist)%0A%20%20%20%20%20%20%20%20if%20max_orig%20%3D%3D%20min_orig%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20dist%3Dnp.ones(len(dist))%0A%20%20%20%20%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20normalized_to_0_1%20%3D%20(dist%20-%20min_orig)%20%2F%20(max_orig%20-%20min_orig)%0A%20%20%20%20%20%20%20%20%20%20%20%20dist%20%3D%200.5%20%2B%20(normalized_to_0_1%20*%20(1%20-%200.5))%0A%20%20%20%20%20%20%20%20return%20aux_df%2C%20dist%0A%20%20%20%20return%20(df_and_dist%2C)%0A%0A%0Aif%20__name__%20%3D%3D%20%22__main__%22%3A%0A%20%20%20%20app.run()%0A</marimo-code></head>
+  <body>
+    <div id="root"></div>
+    <script data-marimo="true">
+      window.__MARIMO_MOUNT_CONFIG__ = {
+            "filename": "notebook.py",
+            "mode": "read",
+            "version": "0.14.6",
+            "serverToken": "unused",
+            "config": {"completion": {"activate_on_typing": true, "copilot": false}, "display": {"cell_output": "above", "code_editor_font_size": 14, "dataframes": "rich", "default_table_page_size": 10, "default_width": "medium", "theme": "light"}, "formatting": {"line_length": 79}, "keymap": {"overrides": {}, "preset": "default"}, "language_servers": {"pylsp": {"enable_flake8": false, "enable_mypy": true, "enable_pydocstyle": false, "enable_pyflakes": false, "enable_pylint": false, "enable_ruff": true, "enabled": true}}, "package_management": {"manager": "pip"}, "runtime": {"auto_instantiate": true, "auto_reload": "off", "default_sql_output": "auto", "on_cell_change": "autorun", "output_max_bytes": 8000000, "reactive_tests": true, "std_stream_max_bytes": 1000000, "watcher_on_save": "lazy"}, "save": {"autosave": "off", "autosave_delay": 1000, "format_on_save": false}, "server": {"browser": "default", "follow_symlink": false}, "snippets": {"custom_paths": [], "include_default_snippets": true}},
+            "configOverrides": {},
+            "appConfig": {"sql_output": "auto", "width": "medium"},
+            "view": {"showAppCode": false},
+            "notebook": null,
+            "session": null,
+            "runtimeConfig": null,
+        };
+    </script>
+  </body>
+</html>
